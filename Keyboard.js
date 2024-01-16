@@ -1,15 +1,17 @@
-const keypress = require('keypress')
-
-class Keyboard {
+export default class Keyboard {
     constructor() {
-        keypress(process.stdin)
-        process.stdin.setRawMode(true)
-        process.stdin.resume()
+        document.addEventListener('keydown', event => this.handleKeydown(event));
+        this.keydownCallback = null;
     }
 
     onKeypress(callback) {
-        process.stdin.on('keypress', (ch, key) => callback(key))
+        console.log('key pressed')
+        this.keydownCallback = callback;
+    }
+
+    handleKeydown(event) {
+        if (this.keydownCallback) {
+            this.keydownCallback(event);
+        }
     }
 }
-
-module.exports = Keyboard

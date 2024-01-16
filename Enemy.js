@@ -1,4 +1,4 @@
-class Enemy {
+export default class Enemy {
     constructor(grid, name, sprite, position, log) {
         this.name = name
         this.grid = grid
@@ -9,5 +9,3 @@ class Enemy {
         this.health = 50
     }
 }
-
-module.exports = Enemy

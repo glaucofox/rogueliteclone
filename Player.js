@@ -1,4 +1,4 @@
-class Player {
+export default class Player {
     constructor(grid, log) {
         this.name = "Player"
         this.sprite = "☺"
@@ -69,5 +69,3 @@ class Player {
         return distance <= range
     }
 }
-
-module.exports = Player

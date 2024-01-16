@@ -1,21 +1,18 @@
-const readline = require('readline')
-const Keyboard = require('./Keyboard')
-const Grid = require('./Grid')
-const Player = require('./Player')
-const Enemy = require('./Enemy')
-const Log = require('./Log')
+import Keyboard from './Keyboard.js';
+import Grid from './Grid.js';
+import Player from './Player.js';
+import Enemy from './Enemy.js';
+import Log from './Log.js';
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-class Game {
+export default class Game {
     constructor() {
         this.log = new Log()
         this.debugMode = false
         this.grid = new Grid(10, 20)
         this.gameOver = false
+        this.canvas = document.getElementById('gameCanvas');
+        this.context = this.canvas.getContext('2d');
+        this.grid = new Grid(10, 20, this.context);
         this.enemies = [
             new Enemy(this.grid, "Goblin", "☻", { x: 2, y: 2 }, this.log),
             new Enemy(this.grid, "Orc", "☻", { x: 4, y: 4 }, this.log)
@@ -31,6 +28,45 @@ class Game {
     }
 
     startGameLoop() {
+        const loop = () => {
+            this.updateGameState();
+            this.renderFrame();
+    
+            if (this.gameRunning) {
+                requestAnimationFrame(loop);
+            }
+        };
+    
+        loop();
+    }
+
+    handleKeypress(event) {
+        switch (event.key) {
+            case 'w':
+            case 'ArrowUp':
+                this.player.move('N');
+                break
+            case 'a':
+            case 'ArrowLeft':
+                this.player.move('W');
+                break
+            case 's':
+            case 'ArrowDown':
+                this.player.move('S');
+                break
+            case 'd':
+            case 'ArrowRight':
+                this.player.move('E');
+                break
+            case 'c':
+            case 'Escape':
+            
+                break
+            
+        }
+
+        this.updateGameState()
+        this.renderFrame()
     }
 
     handleInput(command) {
@@ -75,7 +111,7 @@ class Game {
     }
 
     renderFrame() {
-        this.grid.render()
+        this.grid.renderCanvas()
         this.displayLog()
         if (this.debugMode) {
             this.log.add(`Player Position: ${this.player.position.x}, ${this.player.position.y}`)
@@ -133,5 +169,7 @@ class Game {
     }
 }
 
-const game = new Game()
-game.startGameLoop()
+document.addEventListener('DOMContentLoaded', () => {
+    const game = new Game();
+    game.startGameLoop();
+});

@@ -1,4 +1,4 @@
-class Log {
+export default class Log {
 
     constructor() { this.messages = [] }
 
@@ -6,11 +6,10 @@ class Log {
 
     show() { return this.messages }
 
-    add(message) { 
+    add(message) {
+        console.log(message)
         this.messages.push(message)
         if (this.messages.length > 5)
             this.messages.shift()
     }
 }
-
-module.exports = Log

@@ -1,7 +1,8 @@
-class Grid {
-    constructor(rows, cols) {
+export default class Grid {
+    constructor(rows, cols, context) {
         this.rows = rows
         this.cols = cols
+        this.context = context
         this.grid = this.initializeGrid()
     }
 
@@ -76,9 +77,41 @@ class Grid {
         this.grid.forEach(row => console.log(row.join(' ')))
     }
 
+    renderCanvas() {
+        // Clear the canvas
+        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+
+        // Define the size of each cell
+        const cellWidth = this.context.canvas.width / this.cols;
+        const cellHeight = this.context.canvas.height / this.rows;
+
+        // Render each cell
+        for (let y = 0; y < this.rows; y++) {
+            for (let x = 0; x < this.cols; x++) {
+                // Determine the color or sprite based on the cell's value
+                let cellValue = this.grid[y][x];
+                if (cellValue !== '.') {
+                    // Draw the sprite for the entity
+                    // For now, we'll just use different colors as placeholders
+                    this.context.fillStyle = this.getSpriteColor(cellValue);
+                    this.context.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+                }
+            }
+        }
+    }
+
+    getSpriteColor(sprite) {
+        // Placeholder method to return color based on the sprite character
+        switch (sprite) {
+            case 'P': return 'blue';  // Player color
+            case 'G': return 'green'; // Goblin color
+            case 'O': return 'red';   // Orc color
+            default: return 'black';
+        }
+    }
+
+
     clear() {
         this.grid = this.initializeGrid()
     }
 }
-
-module.exports = Grid
