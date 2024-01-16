@@ -1,5 +1,5 @@
 class Player {
-    constructor(grid) {
+    constructor(grid, log) {
         this.name = "Player"
         this.grid = grid
         this.position = { x: 0, y: 0 }
@@ -7,6 +7,7 @@ class Player {
         this.health = 100
         this.strength = 10
         this.name = "Player"
+        this.log = log
     }
 
     move(direction) {
@@ -16,8 +17,6 @@ class Player {
             const enemy = this.grid.getEnemyAtPosition(newPosition)
             if (enemy) {
                 this.attack(enemy)
-            } else {
-                console.log("Movement blocked: Position occupied.")
             }
         } else {
             this.grid.updateEntityPosition(this, newPosition)
@@ -48,7 +47,7 @@ class Player {
 
     attack(enemy) {
         if (!this.isInRange(enemy)) {
-            console.log(`${enemy.name} is too far away to attack.`)
+            this.log.add(`${enemy.name} is too far away to attack.`)
             return
         }
 
@@ -56,9 +55,9 @@ class Player {
         if (hitChance > 5) {
             const damage = this.strength
             enemy.health -= damage
-            console.log(`You attacked ${enemy.name} and dealt ${damage} damage.`)
+            this.log.add(`You attacked ${enemy.name} and dealt ${damage} damage.`)
         } else {
-            console.log("Your attack missed!")
+            this.log.add("Your attack missed!")
         }
     }
 

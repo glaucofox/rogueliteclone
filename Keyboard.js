@@ -1,15 +1,15 @@
-const keypress = require('keypress');
+const keypress = require('keypress')
 
 class Keyboard {
     constructor() {
-        keypress(process.stdin);
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
+        keypress(process.stdin)
+        process.stdin.setRawMode(true)
+        process.stdin.resume()
     }
 
     onKeypress(callback) {
-        process.stdin.on('keypress', (ch, key) => callback(key));
+        process.stdin.on('keypress', (ch, key) => callback(key))
     }
 }
 
-module.exports = Keyboard;
+module.exports = Keyboard
