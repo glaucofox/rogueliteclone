@@ -1,6 +1,7 @@
 class Player {
     constructor(grid, log) {
         this.name = "Player"
+        this.sprite = "☺"
         this.grid = grid
         this.position = { x: 0, y: 0 }
         this.grid.updateEntityPosition(this, this.position)

@@ -1,19 +1,19 @@
 class Grid {
-    constructor(size) {
-        this.size = size
+    constructor(rows, cols) {
+        this.rows = rows
+        this.cols = cols
         this.grid = this.initializeGrid()
     }
 
     initializeGrid() {
-        let grid = []
-        for (let y = 0; y < this.size; y++) {
-            grid[y] = []
-            for (let x = 0; x < this.size; x++) {
-                grid[y][x] = '.'
+        let grid = [];
+        for (let y = 0; y < this.rows; y++) {
+            grid[y] = [];
+            for (let x = 0; x < this.cols; x++) {
+                grid[y][x] = '.';
             }
         }
-     
-        return grid
+        return grid;
     }
 
     addEnemies(enemies) {
@@ -24,7 +24,7 @@ class Grid {
         if (this.isWithinGrid(newPosition)) {
             if (!this.isOccupied(newPosition) || this.getEntityAtPosition(newPosition) === entity) {
                 this.clearPosition(entity.position);
-                this.grid[newPosition.y][newPosition.x] = entity.name[0];
+                this.grid[newPosition.y][newPosition.x] = entity.sprite;
                 entity.position = newPosition;
                 return true;
             }
@@ -48,7 +48,7 @@ class Grid {
 
     updatePosition(entity) {
         if (this.isWithinGrid(entity.position)) {
-            this.grid[entity.position.y][entity.position.x] = entity.name[0]
+            this.grid[entity.position.y][entity.position.x] = entity.sprite;
         }
     }
 
@@ -59,8 +59,8 @@ class Grid {
     }
 
     isWithinGrid(position) {
-        return position.x >= 0 && position.x < this.size &&
-               position.y >= 0 && position.y < this.size
+        return position.x >= 0 && position.x < this.cols &&
+               position.y >= 0 && position.y < this.rows;
     }
 
     isOccupied(position) {
