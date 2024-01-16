@@ -3,6 +3,7 @@ const Keyboard = require('./Keyboard')
 const Grid = require('./Grid')
 const Player = require('./Player')
 const Enemy = require('./Enemy')
+const Log = require('./Log')
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -11,15 +12,17 @@ const rl = readline.createInterface({
 
 class Game {
     constructor() {
+        this.log = new Log()
         this.debugMode = false
         this.gridSize = 10
         this.grid = new Grid(this.gridSize)
+        this.gameOver = false
         this.enemies = [
             new Enemy(this.grid, "Goblin", { x: 2, y: 2 }),
             new Enemy(this.grid, "Orc", { x: 4, y: 4 })
         ]
         this.grid.addEnemies(this.enemies)
-        this.player = new Player(this.grid)
+        this.player = new Player(this.grid, this.log)
         this.gameRunning = true
         this.keyboard = new Keyboard()
         this.keyboard.onKeypress(key => this.handleKeypress(key))
@@ -32,14 +35,14 @@ class Game {
     }
 
     handleInput(command) {
-        console.clear()
+        clearScreen()
         const directionCommands = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
         if (directionCommands.includes(command.toUpperCase())) {
             this.player.move(command.toUpperCase())
         } else if (command.startsWith("attack")) {
             const args = command.split(" ")
             if (args.length < 2) {
-                console.log("No enemy specified. Usage: attack [enemy name]")
+                this.log.add("No enemy specified. Usage: attack [enemy name]")
                 return
             }
             const enemyName = args[1]
@@ -47,9 +50,13 @@ class Game {
             if (enemy) {
                 this.player.attack(enemy)
             } else {
-                console.log(`No enemy found with the name '${enemyName}'.`)
+                this.log.add(`No enemy found with the name '${enemyName}'.`)
             }
         }
+    }
+
+    clearScreen() {
+        console.clear()
     }
 
     
@@ -57,8 +64,9 @@ class Game {
         this.enemies = this.enemies.filter(enemy => enemy.health > 0)
         this.updateGridPositions()
 
-        if (this.enemies.length === 0) {
-            console.log("All enemies defeated! You win!")
+        if (this.enemies.length === 0 && !this.gameOver) {
+            this.gameOver = true
+            this.log.add("All enemies defeated! You win!")
             this.gameRunning = false
         }
     }
@@ -71,11 +79,18 @@ class Game {
 
     renderFrame() {
         this.grid.render()
+        this.displayLog()
         if (this.debugMode) {
-            console.log(`Player Position: ${this.player.position.x}, ${this.player.position.y}`)
+            this.log.add(`Player Position: ${this.player.position.x}, ${this.player.position.y}`)
             this.enemies.forEach(enemy => {
-                console.log(`${enemy.name} Position: ${enemy.position.x}, ${enemy.position.y} Health: ${enemy.health}`)
+                this.log.add(`${enemy.name} Position: ${enemy.position.x}, ${enemy.position.y} Health: ${enemy.health}`)
             })
+        }
+    }
+
+    displayLog() {
+        for (const message of this.log.show()) {
+            console.log(message);
         }
     }
 
