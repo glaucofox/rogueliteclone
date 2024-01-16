@@ -1,0 +1,14 @@
+{
+  "name": "rogueliteclone",
+  "version": "1.0.0",
+  "description": "Rogue lite clone for terminal",
+  "author": "Glauco Fox",
+  "license": "MIT",
+  "main": "Game.js",
+  "scripts": {
+    "start": "node Game.js"
+  },
+  "dependencies": {
+    "keypress": "^0.2.1"
+  }
+}
