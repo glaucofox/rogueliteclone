@@ -14,12 +14,11 @@ class Game {
     constructor() {
         this.log = new Log()
         this.debugMode = false
-        this.gridSize = 10
-        this.grid = new Grid(this.gridSize)
+        this.grid = new Grid(10, 20)
         this.gameOver = false
         this.enemies = [
-            new Enemy(this.grid, "Goblin", { x: 2, y: 2 }),
-            new Enemy(this.grid, "Orc", { x: 4, y: 4 })
+            new Enemy(this.grid, "Goblin", "☻", { x: 2, y: 2 }, this.log),
+            new Enemy(this.grid, "Orc", "☻", { x: 4, y: 4 }, this.log)
         ]
         this.grid.addEnemies(this.enemies)
         this.player = new Player(this.grid, this.log)
@@ -49,8 +48,6 @@ class Game {
             const enemy = this.enemies.find(e => e.name.toLowerCase() === enemyName.toLowerCase())
             if (enemy) {
                 this.player.attack(enemy)
-            } else {
-                this.log.add(`No enemy found with the name '${enemyName}'.`)
             }
         }
     }
@@ -61,7 +58,7 @@ class Game {
 
     
     updateGameState() {
-        this.enemies = this.enemies.filter(enemy => enemy.health > 0)
+        this.cleanUpDefeatedEnemies()
         this.updateGridPositions()
 
         if (this.enemies.length === 0 && !this.gameOver) {
@@ -123,6 +120,16 @@ class Game {
             this.updateGameState()
             this.renderFrame()
         }
+    }
+
+    cleanUpDefeatedEnemies() {
+        const originalEnemies = [...this.enemies];
+        this.enemies = this.enemies.filter(enemy => enemy.health > 0);
+        originalEnemies.forEach(enemy => {
+            if (enemy.health <= 0) {
+                this.log.add(enemy.name + " is dead.");
+            }
+        });
     }
 }
 
