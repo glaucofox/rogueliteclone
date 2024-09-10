@@ -1,17 +1,14 @@
 const Keyboard = require('./Keyboard')
 const Display = require('./Display')
-const EnemyFactory = require('../factories/EnemyFactory')
 
 class Game {
     constructor() {
         this.debugMode = false
-        this.display = new Display(10, 20)
+        this.display = new Display()
         this.log = this.display.log
+        this.grid = this.display.grid
         this.player = this.display.getPlayer()
-        this.enemyFactory = new EnemyFactory(this.display.grid, this.display.log);
         this.gameOver = false
-        this.enemies = this.enemyFactory.generateEnemies()
-        this.display.setEnemies(this.enemies)
         this.gameRunning = true
         
         this.keyboard = new Keyboard(

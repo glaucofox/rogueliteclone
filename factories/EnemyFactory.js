@@ -6,22 +6,17 @@ class EnemyFactory {
         this.log = log;
     }
 
-    createEnemy(type, position) {
-        switch(type) {
-            case 'Goblin':
-                return new Enemy(this.grid, 'Goblin', '☻', position, this.log);
-            case 'Orc':
-                return new Enemy(this.grid, 'Orc', '☻', position, this.log);
-            default:
-                throw new Error('Unknown enemy type');
-        }
-    }
+    randomEnemy(position) {
+        const enemyTypes = [
+            { name: 'Goblin', sprite: '☻', health: 30 },
+            { name: 'Orc', sprite: '☻', health: 50 },
+            { name: 'Troll', sprite: '☻', health: 70 }
+        ];
 
-    generateEnemies() {
-        return [
-            this.createEnemy("Goblin", { x: 2, y: 2 }),
-            this.createEnemy("Orc", { x: 4, y: 4 })
-        ]
+        const randomType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+        
+        return new Enemy(this.grid, randomType.name, randomType.sprite, position, this.log, randomType.health);
     }
 }
+
 module.exports = EnemyFactory;

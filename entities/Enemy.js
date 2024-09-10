@@ -4,7 +4,6 @@ class Enemy {
         this.grid = grid
         this.sprite = sprite
         this.position = position
-        this.grid.updateEntityPosition(this, this.position)
         this.log = log
         this.health = 50
     }

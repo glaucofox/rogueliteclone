@@ -1,8 +1,18 @@
+const EnemyFactory = require('../factories/EnemyFactory');
+const Map = require('./Map');
+
 class Grid {
-    constructor(rows, cols) {
-        this.rows = rows
-        this.cols = cols
-        this.grid = this.initializeGrid()
+    constructor() {
+        this.map = new Map(this.createEnemyFactory());  // Pass EnemyFactory to Map
+        this.rows = this.map.getRows();
+        this.cols = this.map.getCols();
+        this.grid = this.initializeGrid();
+        this.entities = [];  // Track all entities (players, enemies) on the grid
+        this.applyMap();      // Map is applied after initialization
+    }
+
+    createEnemyFactory() {
+        return new EnemyFactory(this, this.log);  // Create EnemyFactory with grid reference
     }
 
     initializeGrid() {
@@ -16,45 +26,27 @@ class Grid {
         return grid;
     }
 
-    addEnemies(enemies) {
-        this.enemies = enemies
-    }
-
-    updateEntityPosition(entity, newPosition) {
-        if (this.isWithinGrid(newPosition)) {
-            if (!this.isOccupied(newPosition) || this.getEntityAtPosition(newPosition) === entity) {
-                this.clearPosition(entity.position);
-                this.grid[newPosition.y][newPosition.x] = entity.sprite;
-                entity.position = newPosition;
-                return true;
-            }
+    applyMap() {
+        if (this.map && typeof this.map.applyToGrid === 'function') {
+            this.map.applyToGrid(this);  // Apply the map to the grid
+        } else {
+            throw new Error('Invalid map passed to Grid');
         }
-        return false;
     }
 
-    getEntityAtPosition(position) {
-        if (this.isWithinGrid(position) && this.isOccupied(position)) {
-            let allEntities = [this.player, ...this.enemies]
-            return allEntities.find(entity => 
-                entity.position.x === position.x && entity.position.y === position.y)
+    spawnEntity(entity, position) {
+        if (this.isWithinGrid(position) && !this.isOccupied(position)) {
+            entity.position = position;
+            this.entities.push(entity);
+            this.updatePosition(entity);
+        } else {
+            throw new Error(`Cannot spawn entity at ${position.x}, ${position.y}`);
         }
-        return null
-    }
-
-    getEnemyAtPosition(position) {
-        return this.enemies.find(enemy => 
-            enemy.position.x === position.x && enemy.position.y === position.y)
     }
 
     updatePosition(entity) {
         if (this.isWithinGrid(entity.position)) {
             this.grid[entity.position.y][entity.position.x] = entity.sprite;
-        }
-    }
-
-    clearPosition(position) {
-        if (this.isWithinGrid(position)) {
-            this.grid[position.y][position.x] = '.'
         }
     }
 
@@ -64,21 +56,8 @@ class Grid {
     }
 
     isOccupied(position) {
-        if (this.isWithinGrid(position)) {
-            return this.grid[position.y][position.x] !== '.';
-        }
-        return false;
-    }
-    
-
-    render() {
-        console.clear()
-        this.grid.forEach(row => console.log(row.join(' ')))
-    }
-
-    clear() {
-        this.grid = this.initializeGrid()
+        return this.grid[position.y][position.x] !== this.map.TILE_MAP.empty.sprite;
     }
 }
 
-module.exports = Grid
+module.exports = Grid;

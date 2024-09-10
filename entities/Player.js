@@ -4,7 +4,6 @@ class Player {
         this.sprite = "☺"
         this.grid = grid
         this.position = { x: 0, y: 0 }
-        this.grid.updateEntityPosition(this, this.position)
         this.health = 100
         this.strength = 10
         this.name = "Player"
