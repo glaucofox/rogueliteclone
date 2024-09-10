@@ -1,4 +1,3 @@
-const readline = require('readline')
 const Keyboard = require('./Keyboard')
 const Grid = require('./Grid')
 const Player = require('./Player')
