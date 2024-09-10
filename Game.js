@@ -1,22 +1,17 @@
 const Keyboard = require('./Keyboard')
-const Grid = require('./Grid')
-const Player = require('./Player')
+const Display = require('./Display')
 const EnemyFactory = require('./EnemyFactory')
-const Log = require('./Log')
 
 class Game {
     constructor() {
-        this.log = new Log()
         this.debugMode = false
-        this.grid = new Grid(10, 20)
-        this.enemyFactory = new EnemyFactory(this.grid, this.log);
+        this.display = new Display(10, 20)
+        this.log = this.display.log
+        this.player = this.display.getPlayer()
+        this.enemyFactory = new EnemyFactory(this.display.grid, this.display.log);
         this.gameOver = false
-        this.enemies = [
-            this.enemyFactory.createEnemy("Goblin", { x: 2, y: 2 }),
-            this.enemyFactory.createEnemy("Orc", { x: 4, y: 4 })
-        ]
-        this.grid.addEnemies(this.enemies)
-        this.player = new Player(this.grid, this.log)
+        this.enemies = this.enemyFactory.generateEnemies()
+        this.display.setEnemies(this.enemies)
         this.gameRunning = true
         
         this.keyboard = new Keyboard(
@@ -35,17 +30,13 @@ class Game {
             }
 
             this.updateGameState()
-            this.renderFrame()
+            this.display.renderFrame()
         }, 100)
     }
 
-    clearScreen() {
-        console.clear()
-    }
-
     updateGameState() {
-        this.cleanUpDefeatedEnemies()
-        this.updateGridPositions()
+        this.display.cleanUpDefeatedEnemies()
+        this.display.updatePositions()
 
         if (this.enemies.length === 0 && !this.gameOver) {
             this.gameOver = true
@@ -54,43 +45,9 @@ class Game {
         }
     }
 
-    updateGridPositions() {
-        this.grid.clear()
-        this.grid.updatePosition(this.player)
-        this.enemies.forEach(enemy => this.grid.updatePosition(enemy))
-    }
-
-    renderFrame() {
-        this.clearScreen()
-        this.grid.render()
-        this.displayLog()
-        if (this.debugMode) {
-            this.log.add(`Player Position: ${this.player.position.x}, ${this.player.position.y}`)
-            this.enemies.forEach(enemy => {
-                this.log.add(`${enemy.name} Position: ${enemy.position.x}, ${enemy.position.y} Health: ${enemy.health}`)
-            })
-        }
-    }
-
-    displayLog() {
-        for (const message of this.log.show()) {
-            console.log(message)
-        }
-    }
-
     exitGame() {
         this.gameRunning = false
         console.log("Game exited.")
-    }
-
-    cleanUpDefeatedEnemies() {
-        const originalEnemies = [...this.enemies]
-        this.enemies = this.enemies.filter(enemy => enemy.health > 0)
-        originalEnemies.forEach(enemy => {
-            if (enemy.health <= 0) {
-                this.log.add(enemy.name + " is dead.")
-            }
-        })
     }
 }
 

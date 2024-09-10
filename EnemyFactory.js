@@ -12,11 +12,16 @@ class EnemyFactory {
                 return new Enemy(this.grid, 'Goblin', '☻', position, this.log);
             case 'Orc':
                 return new Enemy(this.grid, 'Orc', '☻', position, this.log);
-            // You can add more enemy types here
             default:
                 throw new Error('Unknown enemy type');
         }
     }
-}
 
+    generateEnemies() {
+        return [
+            this.createEnemy("Goblin", { x: 2, y: 2 }),
+            this.createEnemy("Orc", { x: 4, y: 4 })
+        ]
+    }
+}
 module.exports = EnemyFactory;
