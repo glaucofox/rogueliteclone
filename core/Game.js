@@ -1,6 +1,6 @@
 const Keyboard = require('./Keyboard')
 const Display = require('./Display')
-const EnemyFactory = require('./EnemyFactory')
+const EnemyFactory = require('../factories/EnemyFactory')
 
 class Game {
     constructor() {
@@ -51,4 +51,4 @@ class Game {
     }
 }
 
-const game = new Game()
+module.exports = Game

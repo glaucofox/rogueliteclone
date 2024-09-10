@@ -1,6 +1,6 @@
 const Grid = require('./Grid')
 const Log = require('./Log')
-const Player = require('./Player')
+const Player = require('../entities/Player')
 
 class Display {
     constructor(gridWidth, gridHeight) {

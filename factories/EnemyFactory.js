@@ -1,4 +1,4 @@
-const Enemy = require('./Enemy');
+const Enemy = require('../entities/Enemy');
 
 class EnemyFactory {
     constructor(grid, log) {
