@@ -5,11 +5,6 @@ const Player = require('./Player')
 const Enemy = require('./Enemy')
 const Log = require('./Log')
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
 class Game {
     constructor() {
         this.log = new Log()
@@ -23,40 +18,31 @@ class Game {
         this.grid.addEnemies(this.enemies)
         this.player = new Player(this.grid, this.log)
         this.gameRunning = true
-        this.keyboard = new Keyboard()
-        this.keyboard.onKeypress(key => this.handleKeypress(key))
+        
+        this.keyboard = new Keyboard(
+            (direction) => this.player.move(direction),
+            () => this.exitGame()
+        )
 
-        this.updateGameState()
-        this.renderFrame()
+        this.startGameLoop()
     }
 
     startGameLoop() {
-    }
-
-    handleInput(command) {
-        clearScreen()
-        const directionCommands = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-        if (directionCommands.includes(command.toUpperCase())) {
-            this.player.move(command.toUpperCase())
-        } else if (command.startsWith("attack")) {
-            const args = command.split(" ")
-            if (args.length < 2) {
-                this.log.add("No enemy specified. Usage: attack [enemy name]")
+        const gameLoopInterval = setInterval(() => {
+            if (!this.gameRunning) {
+                clearInterval(gameLoopInterval)
                 return
             }
-            const enemyName = args[1]
-            const enemy = this.enemies.find(e => e.name.toLowerCase() === enemyName.toLowerCase())
-            if (enemy) {
-                this.player.attack(enemy)
-            }
-        }
+
+            this.updateGameState()
+            this.renderFrame()
+        }, 100)
     }
 
     clearScreen() {
         console.clear()
     }
 
-    
     updateGameState() {
         this.cleanUpDefeatedEnemies()
         this.updateGridPositions()
@@ -75,6 +61,7 @@ class Game {
     }
 
     renderFrame() {
+        this.clearScreen()
         this.grid.render()
         this.displayLog()
         if (this.debugMode) {
@@ -87,51 +74,24 @@ class Game {
 
     displayLog() {
         for (const message of this.log.show()) {
-            console.log(message);
+            console.log(message)
         }
     }
 
-    handleKeypress(key) {
-        if (key) {
-            switch (key.name) {
-                case 'w':
-                case 'up':
-                    this.player.move('N')
-                    break
-                case 'a':
-                case 'left':
-                    this.player.move('W')
-                    break
-                case 's':
-                case 'down':
-                    this.player.move('S')
-                    break
-                case 'd':
-                case 'right':
-                    this.player.move('E')
-                    break
-                case 'c':
-                case 'escape':
-                    process.stdin.pause()
-                    this.gameRunning = false
-                    break
-            }
-
-            this.updateGameState()
-            this.renderFrame()
-        }
+    exitGame() {
+        this.gameRunning = false
+        console.log("Game exited.")
     }
 
     cleanUpDefeatedEnemies() {
-        const originalEnemies = [...this.enemies];
-        this.enemies = this.enemies.filter(enemy => enemy.health > 0);
+        const originalEnemies = [...this.enemies]
+        this.enemies = this.enemies.filter(enemy => enemy.health > 0)
         originalEnemies.forEach(enemy => {
             if (enemy.health <= 0) {
-                this.log.add(enemy.name + " is dead.");
+                this.log.add(enemy.name + " is dead.")
             }
-        });
+        })
     }
 }
 
 const game = new Game()
-game.startGameLoop()
