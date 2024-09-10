@@ -4,9 +4,9 @@
   "description": "Rogue lite clone for terminal",
   "author": "Glauco Fox",
   "license": "MIT",
-  "main": "Game.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node Game.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "keypress": "^0.2.1"
