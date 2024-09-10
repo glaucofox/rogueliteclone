@@ -1,7 +1,7 @@
 const Keyboard = require('./Keyboard')
 const Grid = require('./Grid')
 const Player = require('./Player')
-const Enemy = require('./Enemy')
+const EnemyFactory = require('./EnemyFactory')
 const Log = require('./Log')
 
 class Game {
@@ -9,10 +9,11 @@ class Game {
         this.log = new Log()
         this.debugMode = false
         this.grid = new Grid(10, 20)
+        this.enemyFactory = new EnemyFactory(this.grid, this.log);
         this.gameOver = false
         this.enemies = [
-            new Enemy(this.grid, "Goblin", "☻", { x: 2, y: 2 }, this.log),
-            new Enemy(this.grid, "Orc", "☻", { x: 4, y: 4 }, this.log)
+            this.enemyFactory.createEnemy("Goblin", { x: 2, y: 2 }),
+            this.enemyFactory.createEnemy("Orc", { x: 4, y: 4 })
         ]
         this.grid.addEnemies(this.enemies)
         this.player = new Player(this.grid, this.log)
